@@ -6,7 +6,78 @@
 // User story: If the user number is different from the random number by 1,
 // give the user 1 point, otherwise, give the user 0 points.
 // User story: User can decide to play the game as long as they want to
+const enterNumber = () => {
+    return new Promise((resolve, reject) => {
+        const userNumber = Number(window.prompt("Enter a number (1-6):"));
+        const randomNumber = Math.floor(Math.random() * 6 + 1);
 
-const start = () => {};
+        if (isNaN(userNumber)) {
+            reject(new Error('Wrong Input Type'));
+        } if (userNumber === randomNumber) {
+            resolve({
+                points: 2,
+                randomNumber,
+            })
+        } else if (userNumber === randomNumber - 1 || userNumber === randomNumber + 1) {
+            resolve({
+                points: 1,
+                randomNumber
+            });
+        } else {
+            resolve({
+                points: 0,
+                randomNumber,
+            });
+        }
+    });
+}
+
+
+const continueGame = () => {
+    return new Promise((resolve) => {
+        if (window.confirm("Do you want to continue?")) {
+            resolve(true);
+        } else {
+            resolve(false);
+        }
+    })
+}
+
+// const handleGuess = () => {
+//     enterNumber().then((result) => {
+//         alert(`Dice: ${result.randomNumber}: you got ${result.points} points`)
+
+//         continueGame().then((result) => {
+//             if (result) {
+//                 handleGuess();
+//             } else {
+//                 alert("Game ends")
+//             }
+//         })
+//     })
+//         .catch((error) => alert(error));
+// }
+
+// async function, equalt to the one above
+const handleGuess = async () => {
+    try {
+        const result = await enterNumber();
+        alert(`Dice: ${result.randomNumber}: you got ${result.points} points`)
+
+        const isContinuing = await continueGame();
+
+        if (isContinuing) {
+            handleGuess();
+        } else {
+            alert("Game ends");
+        }
+    } catch (error) {
+        alert(error);
+    }
+}
+
+const start = () => {
+    handleGuess();
+};
 
 start();
